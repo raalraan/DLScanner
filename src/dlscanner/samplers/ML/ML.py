@@ -144,7 +144,7 @@ def similariy_classifier_1(function_dim,latent_dim):
   tower_1 = embedding_network(input_1)
   tower_2 = embedding_network(input_2)
   merge_layer = layers.Lambda(euclidean_distance)([tower_1, tower_2])
-  output_layer = layers.Dense(1, activation="sigmoid")(merge_layer)
+  output_layer = layers.Dense(1, activation="linear")(merge_layer)
   model = keras.Model(inputs=[input_1, input_2], outputs=output_layer)
   return model
 #############  
