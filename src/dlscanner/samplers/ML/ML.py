@@ -32,7 +32,7 @@ def MLP_Regressor(function_dim,num_FC_layers,neurons):
     x = keras.layers.Dense(neurons,activation=None)(inp)
     for _ in range(num_FC_layers):
       x = keras.layers.Dense(neurons,activation='relu')(x)
-    output = keras.layers.Dense(function_dim,activation='linear')(x)
+    output = keras.layers.Dense(1,activation='linear')(x)
     model = keras.Model(inp,output)
     return model 
     
