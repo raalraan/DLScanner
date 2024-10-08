@@ -16,3 +16,6 @@ Replace `/path/to/new/virtual/environment` with the path
 that you want to contain the files for the virtual environment.
 For example, `.venv` in the root of this repository.
 
+Then, install this package for testing by running `pip install -e .` from the
+root of this repository.
+
