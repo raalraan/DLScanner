@@ -45,7 +45,7 @@ class sampler():
         learning_rate=0.001,  # Should start as None?
         epochs=1000,  # Should start as None?
         batch_size=32,  # Should start as None?
-        verbose=None,
+        verbose=1,
         args=None,  # TODO Not used for the time being
         seed=42,
     ):
@@ -96,10 +96,7 @@ class sampler():
         self.epochs = epochs
         self.batch_size = batch_size
         # ==================================================
-        if verbose is None:
-            self.verbose = 1
-        else:
-            self.verbose = verbose
+        self.verbose = verbose
         self.inited = False
         self.sample = np.empty((0, ndim))
         self.llsample = np.empty((0, self.outdim))
@@ -271,7 +268,7 @@ class sampler():
         if testpts is None:
             testpts = self.testpts
         if verbose is None:
-            testpts = self.verbose
+            verbose = self.verbose
         _randpts = randpts
         # Try to  predict the observable for several points using what the
         # machine learned
