@@ -299,7 +299,7 @@ class sampler():
             )
 
         # Use the points according to the class predicted by the model
-        # but pass the correct likelihood. In this way, the points that the
+        # but pass the correct class. In this way, the points that the
         # model got wrong should be corrected
         xsel = xcand[:npts - _randpts]
         # TODO Check what would be good/interesting stats
