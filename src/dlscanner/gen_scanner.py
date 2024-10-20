@@ -114,8 +114,6 @@ class sampler():
                 "The value of `ndim` must match the number of pairs in `limits`"
             )
 
-        # TODO Instatiate a random number generator instance
-
 
     # TODO This may need to be changed depending on choices of prior --
     def genrand(self, npts):
@@ -300,9 +298,7 @@ class sampler():
                 )
             )
 
-        # xcand = xtry[(chi2try < 10)[:, 0]]
-
-        # Use the points according to the likelihood predicted by the model
+        # Use the points according to the class predicted by the model
         # but pass the correct likelihood. In this way, the points that the
         # model got wrong should be corrected
         xsel = xcand[:npts - _randpts]
