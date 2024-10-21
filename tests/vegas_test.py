@@ -11,8 +11,9 @@ def fvgm(x):
 
 
 xtst = np.random.uniform(0, 1, (1000, 3))
+limits = [[0, 1]]*3
 
-vgmap = vegas_map_samples(xtst, fvgm(xtst))
+vgmap = vegas_map_samples(xtst, fvgm(xtst), limits)
 print(
     vgmap(100)
 )
