@@ -2,7 +2,37 @@ import vegas
 import numpy as np
 
 
-def vegas_map_samples(xtrain, ftrain, ninc=100, nitn=5, alpha=1.0, nproc=1):
+def convert_to_unit_cube(x, limits):
+    ndim = x.shape[1]
+    new_x = np.empty(x.shape)
+
+    for k in range(ndim):
+        width = limits[k][1] - limits[k][0]
+        new_x[:, k] = (x[:, k] - limits[k][0])/width
+
+    return new_x
+
+
+def convert_to_limits(x, limits):
+    ndim = x.shape[1]
+    new_x = np.empty(x.shape)
+
+    for k in range(ndim):
+        width = limits[k][1] - limits[k][0]
+        # new_x[:, k] = (x[:, k] - limits[k][0])/width
+        new_x[:, k] = x[:, k]*width + limits[k][0]
+
+    return new_x
+
+
+
+def vegas_map_samples(
+        xtrain, ftrain, limits,
+        ninc=100,
+        nitn=5,
+        alpha=1.0,
+        nproc=1
+):
     '''Train a mapping of the parameter space using vegas and a sample of points.
     Input Args:
         xtrain: array
@@ -21,9 +51,10 @@ def vegas_map_samples(xtrain, ftrain, ninc=100, nitn=5, alpha=1.0, nproc=1):
         Callable function to create a random sample using the trained mapping
     '''
     ndim = xtrain.shape[1]
+    _xtrain = convert_to_unit_cube(xtrain, limits)
     vg_AdMap = vegas.AdaptiveMap([[0, 1]]*ndim, ninc=ninc)
     vg_AdMap.adapt_to_samples(
-        xtrain, ftrain,
+        _xtrain, ftrain,
         nitn=nitn, alpha=alpha, nproc=nproc
     )
 
@@ -43,6 +74,6 @@ def vegas_map_samples(xtrain, ftrain, ninc=100, nitn=5, alpha=1.0, nproc=1):
         jacmap = np.empty(xrndu.shape[0], xrndu.dtype)
         vg_AdMap.map(xrndu, xrndmap, jacmap)
 
-        return xrndmap, jacmap
+        return convert_to_limits(xrndmap, limits), jacmap
 
     return _vegas_sample
