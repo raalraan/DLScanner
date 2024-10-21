@@ -1,4 +1,5 @@
 import numpy as np
+from .utilities.vegas import vegas_map_samples
 
 class sampler():
     """A generic scanner for a user-defined function
@@ -47,6 +48,8 @@ class sampler():
         batch_size=32,  # Should start as None?
         verbose=1,
         args=None,  # TODO Not used for the time being
+        use_vegas_map=False,
+        vegas_frac=None,
         seed=42,
     ):
         self.sample0 = sample0
@@ -100,6 +103,11 @@ class sampler():
         self.inited = False
         self.sample = np.empty((0, ndim))
         self.llsample = np.empty((0, self.outdim))
+        self.use_vegas_map = use_vegas_map
+        if use_vegas_map and vegas_frac is None:
+            self.vegas_frac = 0.1
+        else:
+            self.vegas_frac = vegas_frac
 
         self.rng = np.random.default_rng(seed)
 
@@ -254,7 +262,7 @@ class sampler():
     def suggestpts(
         self,
         npts=None, randpts=None, testpts=None, limits=None,
-        verbose=None
+        verbose=None, use_vegas_map=None, vegas_frac=None
     ):
         # randpts: number of points chosen at random that will be
         #     added to the suggested points, randpts < self.pts_per_step
@@ -269,10 +277,29 @@ class sampler():
             testpts = self.testpts
         if verbose is None:
             verbose = self.verbose
+        if use_vegas_map is None:
+            use_vegas_map = self.use_vegas_map
+        if vegas_frac is None:
+            vegas_frac = self.vegas_frac
         _randpts = randpts
         # Try to  predict the observable for several points using what the
         # machine learned
         xtry = self.genrand(testpts)
+
+        if use_vegas_map:
+            vegas_pts = int(vegas_frac*testpts + 0.5)
+            # Train a vegas map
+            if verbose > 0:
+                print("Training vegas map using accumulated sample")
+            map_vg = vegas_map_samples(
+                self.sample, self.llsample.flatten(), self.limits
+            )
+            # Discard jacobian
+            xtry_vg, _ = map_vg(testpts)
+            xtry = np.concatenate([
+                xtry[:testpts - vegas_pts],
+                xtry_vg[:int(vegas_frac*testpts)]
+            ])
 
         ptry = self.model.predict(
             xtry,
