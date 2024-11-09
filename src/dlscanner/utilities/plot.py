@@ -16,7 +16,9 @@ def plot_contour_scatter(file_:str, x_col:int, y_col:int, x_label:str,y_label:st
     plt.tick_params(labelsize=15)
     plt.xlabel(x_label,fontsize=20)
     plt.ylabel(y_label,fontsize=20)
-    plt.colorbar(label='Density')
+    cbar = plt.colorbar()
+    cbar.set_label('Density', fontsize=20)
+    cbar.ax.tick_params(labelsize=15) 
 
     fig.add_subplot(122)
     plt.scatter(x,y,s=2);
@@ -45,7 +47,9 @@ def plot_contour(file_:str, x_col:int, y_col:int, x_label:str,y_label:str):
     plt.tick_params(labelsize=15)
     plt.xlabel(x_label,fontsize=20)
     plt.ylabel(y_label,fontsize=20)
-    plt.colorbar(label='Density')
+    cbar = plt.colorbar()
+    cbar.set_label('Density', fontsize=20)
+    cbar.ax.tick_params(labelsize=15) 
     plt.savefig('contour_%s_%s.png'%(x_label,y_label))
     plt.show()    
     
