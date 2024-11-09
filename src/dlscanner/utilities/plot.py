@@ -2,7 +2,6 @@ def plot_contour_scatter(file_:str, x_col:int, y_col:int, x_label:str,y_label:st
     import numpy as np
     import matplotlib.pyplot as plt
     from scipy.stats import kde
-    import matplotlib
     data = np.loadtxt(file_,delimiter=',')
     x = data[:,x_col]
     y = data[:,y_col]
@@ -33,7 +32,6 @@ def plot_contour(file_:str, x_col:int, y_col:int, x_label:str,y_label:str):
     import numpy as np
     import matplotlib.pyplot as plt
     from scipy.stats import kde
-    import matplotlib
     data = np.loadtxt(file_,delimiter=',')
     x = data[:,x_col]
     y = data[:,y_col]
@@ -54,8 +52,6 @@ def plot_contour(file_:str, x_col:int, y_col:int, x_label:str,y_label:str):
 def plot_scatter(file_:str, x_col:int, y_col:int, x_label:str,y_label:str):
     import numpy as np
     import matplotlib.pyplot as plt
-    from scipy.stats import kde
-    import matplotlib
     data = np.loadtxt(file_,delimiter=',')
     x = data[:,x_col]
     y = data[:,y_col]
