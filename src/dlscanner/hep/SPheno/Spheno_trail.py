@@ -171,6 +171,7 @@ def const(i,TotConstScanned,ConstLabel,ConstNum,ConstResNum,ConstMin,ConstMax):
       if (null == 256):
          return 0 
    f=open(str(i), 'r')
+   lim = 1
    for xxx in f: 
       for zz in range(0,TotConstScanned):
           if (str(ConstNum[zz])  and str(ConstLabel[zz])) in xxx:
@@ -179,15 +180,16 @@ def const(i,TotConstScanned,ConstLabel,ConstNum,ConstResNum,ConstMin,ConstMax):
             if (Xmm == 1) :
                l = int(float(r[Xmm]))
                if (l not in range(int(ConstMin[zz]),int(ConstMax[zz])) and str(r[0])!= 'DECAY'):
-                  return 0
-               else: return 1   
+                  lim *= 0
+               else: lim *=1   
             if (Xmm != 1) :
                l =  float(r[Xmm])
                mm = float(ConstMin[zz])
                nm = float(ConstMax[zz])
                if (l < mm) or (l>nm):
-                  return 0
-               else: return 1   
+                  lim *=0
+               else: lim *=1
+   return lim   
                
 #################
 def run_train(npoints,TotVarScanned,Lesh,VarMin,VarMax,VarNum,VarLabel,SPHENOMODEL,pathS,TotVarTarget,TargetLabel,TargetNum,TargetResNum,TargetMin,TargetMax,_output):     
