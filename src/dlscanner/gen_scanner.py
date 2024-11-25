@@ -59,21 +59,21 @@ class sampler():
             if model is None:
                 raise ValueError(
                     "A `model` parameter is needed for the 'ML' method. "
-                    "See dlscanner.samplers.ML.ML for available models."
+                    "See DLScanner.samplers.ML.ML for available models."
                 )
             else:
                 self.model = model
             if optimizer is None:
                 raise ValueError(
                     "A `optimizer` parameter is needed for the 'ML' method. "
-                    "See dlscanner.samplers.ML.ML for available models."
+                    "See DLScanner.samplers.ML.ML for available models."
                 )
             else:
                 self.optimizer = optimizer
             if loss is None:
                 raise ValueError(
                     "A `loss` parameter is needed for the 'ML' method. "
-                    "See dlscanner.samplers.ML.ML for available models."
+                    "See DLScanner.samplers.ML.ML for available models."
                 )
             else:
                 self.loss = loss

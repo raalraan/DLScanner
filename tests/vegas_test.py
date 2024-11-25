@@ -1,4 +1,4 @@
-from dlscanner.utilities.vegas import vegas_map_samples
+from DLScanner.utilities.vegas import vegas_map_samples
 import numpy as np
 
 

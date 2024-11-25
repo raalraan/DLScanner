@@ -1,6 +1,6 @@
 import numpy as np
-from dlscanner.samplers.ML import ML
-from dlscanner.gen_scanner import sampler
+from DLScanner.samplers.ML import ML
+from DLScanner.gen_scanner import sampler
 import matplotlib.pyplot as plt
 
 
