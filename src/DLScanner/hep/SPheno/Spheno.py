@@ -88,7 +88,7 @@ class scan():
         return
         
         
-    def run_MLPC(self,num_FC_layers,neurons,learning_rate=0.01,epochs=100,batch_size=100,print_output=True):
+    def run_MLPC(self,num_FC_layers,neurons,learning_rate=0.01,epochs=100,batch_size=100,Vegas=True,print_output=True):
         import tensorflow as tf
         from tensorflow import keras
         import sklearn
@@ -117,7 +117,10 @@ class scan():
             limits = np.column_stack((VarMin,VarMax))
             Veg_map = vegas_map_samples(x_vegas,y_vegas,limits)
             x,_ = Veg_map(x_test)
-            pred = model.predict(x,verbose=0).flatten()
+            if Vegas: 
+                pred = model.predict(x,verbose=0).flatten()
+            else:    
+                pred = model.predict(x_test,verbose=0).flatten()
             qs = np.argsort(pred)[::-1]
             if len(x[pred>0.9]) > round(self.K*self.frac): # How to choose the good points
                 xsel1 = x[pred>0.9][:round(self.K*(1-self.frac))]
@@ -157,7 +160,7 @@ class scan():
         print('Output saved in %s' %str(output_dir))
         return    
       
-    def run_similarity(self,num_FC_layers,neurons,latent_dim=10,learning_rate=0.01,epochs=100,batch_size=100,print_output=True):
+    def run_similarity(self,num_FC_layers,neurons,latent_dim=10,learning_rate=0.01,epochs=100,batch_size=100,Vegas=True,print_output=True):
         import tensorflow as tf
         from tensorflow import keras
         import sklearn
@@ -183,7 +186,10 @@ class scan():
             limits = np.column_stack((VarMin,VarMax))
             Veg_map = vegas_map_samples(x_vegas,y_vegas,limits)
             x,_ = Veg_map(x_test)
-            pred = model.predict(x,verbose=0).flatten()
+            if Vegas:
+                pred = model.predict(x,verbose=0).flatten()
+            else:
+                pred = model.predict(x_test,verbose=0).flatten()
             qs = np.argsort(pred)[::-1]
             if len(x[pred>0.9]) > round(self.K*self.frac): # How to choose the good points
                 xsel1 = x[pred>0.9][:round(self.K*(1-self.frac))]
@@ -253,7 +259,7 @@ def RFC(collected_points=500,L1=100,L=1000,K=100,period=1,frac=0.2,learning_rate
     return
   
 #########################################################################  
-def MLPC(collected_points=5000,L1=100,L=1000,K=300,period=1,frac=0.2,learning_rate=0.01,num_FC_layers=5,neurons=100,print_output=True):
+def MLPC(Vegas=True,collected_points=5000,L1=100,L=1000,K=300,period=1,frac=0.2,learning_rate=0.01,num_FC_layers=5,neurons=100,print_output=True):
     ''' Function to run the scan over SPheno Package using MLP Calssifier.
   Requirements:
                        1) Input file specifies the spheno directory, output directory, scan ranges and target ranges.
@@ -277,11 +283,10 @@ def MLPC(collected_points=5000,L1=100,L=1000,K=300,period=1,frac=0.2,learning_ra
    MLPC(collected_points=500,L1=100,L=1000,K=100,period=1,frac=0.2,K_smote=1,learning_rate=0.01,num_FC_layers=5,neurons=100,print_output=True)                      
     ''' 
     model = scan(collected_points,L1,L,K,period,frac)  
-    model.run_MLPC(num_FC_layers,neurons,learning_rate=0.01,print_output=True)
+    model.run_MLPC(num_FC_layers,neurons,learning_rate=0.01,Vegas=Vegas,print_output=True)
     return  
 #############
-
-def ML_SL(collected_points=1000,L1=100,L=1000,K=300,period=1,frac=0.2,learning_rate=0.01,num_FC_layers=5,neurons=100,print_output=True):
+def ML_SL(Vegas=True,collected_points=1000,L1=100,L=1000,K=300,period=1,frac=0.2,learning_rate=0.01,num_FC_layers=5,neurons=100,print_output=True):
     ''' Function to run the scan over SPheno Package using MLP Calssifier.
   Requirements:
                        1) Input file specifies the spheno directory, output directory, scan ranges and target ranges.
@@ -305,7 +310,7 @@ def ML_SL(collected_points=1000,L1=100,L=1000,K=300,period=1,frac=0.2,learning_r
    MLPC(collected_points=500,L1=100,L=1000,K=100,period=1,frac=0.2,K_smote=1,learning_rate=0.01,num_FC_layers=5,neurons=100,print_output=True)                      
     ''' 
     model = scan(collected_points,L1,L,K,period,frac)  
-    model.run_similarity(num_FC_layers,neurons,learning_rate=0.01,print_output=True)
+    model.run_similarity(num_FC_layers,neurons,learning_rate=0.01,Vegas,print_output=True)
     return  
 #############
 ML_SL()
