@@ -97,3 +97,24 @@ def plot_hist_all(file_:str,width= 15,hight=10, bins=100, Normalize=True, grid=T
   plt.tight_layout()
   plt.savefig('plot_hist_all.pdf')
   plt.show()  
+
+
+
+def plot_hist(file_:str,width= 15,hight=10, bins=100, Normalize=True, grid=True,col):
+  import numpy as np
+  import matplotlib.pyplot as plt
+  f= open(file_, 'r')
+  label = f.readlines()
+  label1 = label[0]
+  labels = label1.rsplit('\t')
+  data = np.loadtxt(file_,delimiter=',')
+  fig = plt.figure(figsize=(width,hight))
+  plt.hist(data[:,col], bins=bins,histtype='step', fill=False,density=Normalize);
+  plt.ylabel('Density', fontsize=20);
+  plt.xlabel(labels[col], fontsize=20);
+  plt.tick_params('both', labelsize=15);
+  if grid:
+    plt.grid(linestyle='--', color='k',linewidth=1.1)
+  plt.tight_layout()
+  plt.savefig('plot_hist.pdf')
+  plt.show()  
