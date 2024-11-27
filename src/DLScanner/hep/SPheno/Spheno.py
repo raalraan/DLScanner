@@ -21,6 +21,14 @@ class scan():
         self.frac = frac
 
 
+    def lr_schedule(self,epoch):
+        lr = 1e-2
+        if epoch >= 10:
+            lr *= 0.1
+        elif epoch > 20:
+            lr *= 0.05
+        return lr 
+    
     def labeler(self,x,th):
         ll=[]
         for q,item in enumerate(x):
@@ -92,6 +100,13 @@ class scan():
         import tensorflow as tf
         from tensorflow import keras
         import sklearn
+        from keras.callbacks import ModelCheckpoint,EarlyStopping,LearningRateScheduler,ProgbarLogger
+        ########################################
+        earlystop = EarlyStopping(monitor = 'val_loss',restore_best_weights=True, patience=5,verbose=0)
+        lr_scheduler = keras.callbacks.LearningRateScheduler(self.lr_schedule)
+        progress_bar = keras.callbacks.ProgbarLogger(count_mode="steps")
+        callbacks_list = [earlystop, lr_scheduler, progress_bar]
+        #########################################
         pathS, Lesh,SPHENOMODEL,output_dir,TotVarScanned, VarMin , VarMax,VarLabel,VarNum,TotVarTarget, TargetMin , TargetMax,TargetLabel,TargetNum ,TargetResNum   = read_input() 
         check_(pathS,Lesh,SPHENOMODEL,output_dir)  
         model = MLP_Classifier(TotVarScanned,num_FC_layers,neurons)
@@ -105,7 +120,7 @@ class scan():
         print('\nNumber of initial points in the traget region:  ', len(obs1_g) )
         x_t = np.concatenate((X_g,X_b))
         y_t = np.concatenate((obs1_g,obs1_b))
-        model.fit(x_t,y_t,epochs=epochs, batch_size=batch_size,verbose=0)
+        model.fit(x_t,y_t,epochs=epochs, batch_size=batch_size,callbacks=callbacks_list,verbose=0)
         if len(obs1_g) < 10 : sys.exit('Number of initial collected points is too low to train the network. Please try to increase the target range or do more iteration... EXIT!')
         q= 0
 
@@ -136,13 +151,13 @@ class scan():
                 X = np.concatenate([X_g,X_b],axis=0)
                 obs = np.concatenate([obs1_g,obs1_b],axis=0)
                 X_shuffled, Y_shuffled = sklearn.utils.shuffle(X, obs)
-                model.fit(X_shuffled, Y_shuffled,epochs=epochs, batch_size=batch_size,verbose=0)
+                model.fit(X_shuffled, Y_shuffled,epochs=epochs, batch_size=batch_size,callbacks=callbacks_list,verbose=0)
 
             else:
                 X = np.concatenate([xsel2[ob==1],xsel2[ob==0]],axis=0)
                 obs=np.concatenate([ob[ob==1],ob[ob==0]],axis=0)
                 X_shuffled, Y_shuffled = sklearn.utils.shuffle(X, obs)
-                model.fit(X_shuffled, Y_shuffled,epochs=epochs, batch_size=batch_size,verbose=0)
+                model.fit(X_shuffled, Y_shuffled,epochs=epochs, batch_size=batch_size,callbacks=callbacks_list,verbose=0)
             if print_output == True:
                 print('DNN_model- Run Number {} - Number of collected points= {}'.format(q,len(X_g)))
                 
