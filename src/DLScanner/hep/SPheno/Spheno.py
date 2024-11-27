@@ -220,13 +220,14 @@ class scan():
                 X = np.concatenate([X_g,X_b],axis=0)
                 obs = np.concatenate([obs1_g,obs1_b],axis=0)
                 X_shuffled, Y_shuffled = sklearn.utils.shuffle(X, obs)
-                model.fit(X_shuffled, Y_shuffled,epochs=epochs, batch_size=batch_size,verbose=0)
+                model = similariy_classifier(X_shuffled, Y_shuffled,TotVarScanned,latent_dim,neurons,num_FC_layers,epochs=epochs, learning_rate=learning_rate,batch_size=batch_size,verbose=0)
+                #model.fit(X_shuffled, Y_shuffled,epochs=epochs, batch_size=batch_size,verbose=0)
 
             else:
                 X = np.concatenate([xsel2[ob==1],xsel2[ob==0]],axis=0)
                 obs=np.concatenate([ob[ob==1],ob[ob==0]],axis=0)
                 X_shuffled, Y_shuffled = sklearn.utils.shuffle(X, obs)
-                model.fit(X_shuffled, Y_shuffled,epochs=epochs, batch_size=batch_size,verbose=0)
+                model = similariy_classifier(X_shuffled, Y_shuffled,TotVarScanned,latent_dim,neurons,num_FC_layers,epochs=epochs, learning_rate=learning_rate,batch_size=batch_size,verbose=0)
             if print_output == True:
                 print('DNN_model- Run Number {} - Number of collected points= {}'.format(q,len(X_g)))
         
