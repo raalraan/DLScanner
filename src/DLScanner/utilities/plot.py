@@ -76,4 +76,24 @@ def plot_scatter(file_:str, x_col:int, y_col:int, x_label:str,y_label:str):
     
     
     
-#plot_contour('Accumelated_points.txt',1,4,'M1','M2')    
+def plot_hist_all(file_:str,width= 15,hight=10, bins=100, Normalize=True, grid=True):
+  import numpy as np
+  import matplotlib.pyplot as plt
+  f= open(file_, 'r')
+  label = f.readlines()
+  label1 = label[0]
+  labels = label1.rsplit('\t')
+  data = np.loadtxt(file_,delimiter=',')
+  dim = int(np.ceil(np.sqrt(data.shape[1])))
+  fig = plt.figure(figsize=(width,hight))
+  for i in range(data.shape[1]):
+    y = fig.add_subplot(dim, dim, i+1)
+    y.hist(data[:,i], bins=bins,histtype='step', fill=False,density=Normalize);
+    y.set_ylabel('Density', fontsize=20);
+    y.set_xlabel(labels[i], fontsize=20);
+    plt.tick_params('both', labelsize=15);
+    if grid:
+      plt.grid(linestyle='--', color='k',linewidth=1.1)
+  plt.tight_layout()
+  plt.savefig('plot_hist_all.pdf')
+  plt.show()  
