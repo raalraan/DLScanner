@@ -697,7 +697,7 @@ class scan():
 # Create an instanace of the calss to access all functions    #
 ###############################################################
 #########################################################################  
-def MLPC(collected_points=5000,L1=100,L=1000,K=300,period=1,frac=0.2,learning_rate=0.01,num_FC_layers=5,neurons=100,print_output=True):
+def MLPC_trial(collected_points=5000,L1=100,L=1000,K=300,period=1,frac=0.2,learning_rate=0.01,num_FC_layers=5,neurons=100,print_output=True):
     ''' Function to run the scan over SPheno Package using MLP Calssifier.
   Requirements:
                        1) Input file specifies the spheno directory, output directory, scan ranges and target ranges.
@@ -725,7 +725,7 @@ def MLPC(collected_points=5000,L1=100,L=1000,K=300,period=1,frac=0.2,learning_ra
     return  
 #############
 
-def ML_SL(collected_points=5000,L1=100,L=1000,K=300,period=1,frac=0.2,learning_rate=0.01,num_FC_layers=5,neurons=100,print_output=True):
+def ML_SL_trial(collected_points=5000,L1=100,L=1000,K=300,period=1,frac=0.2,learning_rate=0.01,num_FC_layers=5,neurons=100,print_output=True):
     ''' Function to run the scan over SPheno Package using MLP Calssifier.
   Requirements:
                        1) Input file specifies the spheno directory, output directory, scan ranges and target ranges.
@@ -752,4 +752,4 @@ def ML_SL(collected_points=5000,L1=100,L=1000,K=300,period=1,frac=0.2,learning_r
     model.run_similarity(num_FC_layers,neurons,learning_rate=0.01,print_output=True)
     return  
 #############
-ML_SL()
+ML_SL_trial()
