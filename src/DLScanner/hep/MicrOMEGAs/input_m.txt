@@ -1,0 +1,27 @@
+path_micromegas:    /Users/hammad/work/ML_scanner/scan_trial/micromegas_6.0.4/MSSM
+input: mssm1.par
+output_dir:    /Users/hammad/work/ML_scanner/scan_trial/output_mOmegas        
+#################################
+TotVarScanned: 2
+
+VarMin: 2.00000E+02  
+VarMax: 4.000E+02   
+VarLabel: mu     
+
+
+VarMin: 5.00000E+00
+VarMax: 3.000E+01    
+VarLabel: tb
+#####################
+### Define the traget region below#
+#####################
+
+TotTarget: 1
+
+TargetMin: 0.09
+TargetMax: 0.1  
+TargetLabel: Omega
+
+
+
+
