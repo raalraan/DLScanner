@@ -275,6 +275,121 @@ def refine_points(npoints,TotVarScanned,Lesh,VarMin,VarMax,VarNum,VarLabel,SPHEN
                   os.rename('spc.slha','SPheno.spc.%s_%s'%(str(SPHENOMODEL),(st)))
                   move('SPheno.spc.%s_%s'%(str(SPHENOMODEL),(st)),_output+"/Spectrums/")
           os.remove('out.txt')
+    return np.array(AI_X),np.array(AI_Y)
+
+def likelihood(exp_value,th_max,th_min):
+    out = []
+    for b in range(len(exp_value)):
+        ll_st = 1
+        for i in range(len(th_max)):
+            th = (th_max[i] + th_min[i])/2
+            std = abs(th_max[i] ) - abs(th)
+            ll_c = np.exp(- (exp_value[b] - th)**2/(2*std**2))
+            ll_st *= ll_c
+        out.append(ll_st)    
+    return np.array(out)     
+
+def run_train_reg(npoints,th_value,TotVarScanned,Lesh,VarMin,VarMax,VarNum,VarLabel,SPHENOMODEL,pathS,TotVarTarget,TargetLabel,TargetNum,TargetResNum,TargetMin,TargetMax,_output):     
+    '''Function to run the Spheno scan randomly. This is the zero step in the scanning loop.
+    Input Args: 
+                 npoints: Number of points to be specified by the user 
+                 other inputs: Inputs that extracted from the input file.
+    retuerns:
+              AI_X: Features of the dimensions (npoints, func_dim)
+              AI_Y: labels for each point. Points in the traget region have label ==1, outside ==0             
+    ''' 
+    os.chdir(pathS)
+    AI_X = np.empty(shape=[0,TotVarScanned])
+    AI_Y = []
+    xx =0
+    ###########################
+    while  len(AI_Y) < npoints:
+        xx +=1
+        sys.stdout.write('\r'+' Running the initial random scanning to collect points to train the ML network: %s / %s ' %(len(AI_Y), npoints)) 
+        newrunfile = open('newfile','w')
+        oldrunfile = open(str(Lesh),'r+')
+        AI_L = []
+        for line in oldrunfile: 
+            NewlineAdded = 0
+            for yy in range(0,TotVarScanned):
+                if str(VarLabel[yy]) in line:
+                    value = VarMin[yy] + (VarMax[yy] - VarMin[yy])*random.random()
+                    AI_L.append(value)
+                    valuestr = str("%.4E" % value)
+                    newrunfile.write(str(VarNum[yy])+'   '+valuestr +str('     ')+ VarLabel[yy]+'\n')
+                    NewlineAdded = 1
+            if NewlineAdded == 0:
+                newrunfile.write(line)
+        newrunfile.close()
+        oldrunfile.close()
+        os.remove(str(Lesh))
+        AI_L= np.array(AI_L).reshape(1,TotVarScanned)
+        ############################    
+        os.rename('newfile',str(Lesh))
+        os.system('./bin/SPheno'+str(SPHENOMODEL)+' '+str(Lesh)+' spc.slha'+' >  out.txt ')
+        out = open(str(pathS)+'out.txt','r+')
+        for l in out:
+            if str('Finished!') in l:
+              label = const('spc.slha',TotVarTarget,TargetLabel,TargetNum,TargetResNum,TargetMin,TargetMax)
+              ll_1 = likelihood(label,TargetMax,TargetMin)
+              if ll_1 [0]> th_value:
+                  AI_Y.append(ll_1 [0])
+                  AI_X = np.append(AI_X,AI_L,axis=0)
+                  st = time.time()
+                  os.rename('spc.slha','SPheno.spc.%s_%s'%(str(SPHENOMODEL),(st)))
+                  move('SPheno.spc.%s_%s'%(str(SPHENOMODEL),(st)),_output+"/Spectrums/")
+        os.remove('out.txt')
     return np.array(AI_X),np.array(AI_Y)  
+#################################
+def refine_points_reg(npoints,th_value,TotVarScanned,Lesh,VarMin,VarMax,VarNum,VarLabel,SPHENOMODEL,pathS,TotVarTarget,TargetLabel,TargetNum,TargetResNum,TargetMin,TargetMax,_output):      
+    ''' Function to refine the generated points
+  Return: 
+           AI_X: refined points. Collected points that tested by Spheno
+           AI_Y: refined labels. labels that tested by Spheno
+   '''
+ 
+    os.chdir(pathS)
+    AI_X = np.empty(shape=[0,TotVarScanned])
+    AI_Y = []
+  ######
+    for xx in range(0,npoints.shape[0]):
+          #sys.stdout.write('\r'+'Correcting the predicted points: %s / %s ' %(xx+1, npoints.shape[0])) 
+          newrunfile = open('newfile','w')
+          oldrunfile = open(str(Lesh),'r+')
+          AI_L = []
+          for line in oldrunfile: 
+              NewlineAdded = 0
+              for yy in range(0,TotVarScanned):
+                  if str(VarLabel[yy]) in line:
+                      value = npoints[xx,yy]
+                      AI_L.append(value)
+                      valuestr = str("%.4E" % value)
+                      newrunfile.write(str(VarNum[yy])+'   '+valuestr +str('     ')+ VarLabel[yy]+'\n')
+                      NewlineAdded = 1
+              if NewlineAdded == 0:
+                  newrunfile.write(line)
+          newrunfile.close()
+          oldrunfile.close()
+          os.remove(str(Lesh))
+          AI_L= np.array(AI_L).reshape(1,TotVarScanned)
+          ############################    
+          os.rename('newfile',str(Lesh))
+          os.system('./bin/SPheno'+str(SPHENOMODEL)+' '+str(Lesh)+' spc.slha'+' >  out.txt')
+          out = open(str(pathS)+'out.txt','r+')
+          for l in out:
+              if str('Finished!') in l:
+                label = const('spc.slha',TotVarTarget,TargetLabel,TargetNum,TargetResNum,TargetMin,TargetMax)
+                ll_1 = likelihood(label,TargetMax,TargetMin)
+                if ll_1 [0]> th_value:
+                  AI_Y.append(ll_1 [0])
+                  AI_X = np.append(AI_X,AI_L,axis=0)
+                  st = time.time()
+                  os.rename('spc.slha','SPheno.spc.%s_%s'%(str(SPHENOMODEL),(st)))
+                  move('SPheno.spc.%s_%s'%(str(SPHENOMODEL),(st)),_output+"/Spectrums/")
+          os.remove('out.txt')
+    return np.array(AI_X),np.array(AI_Y)  
+
+
+
 
 
