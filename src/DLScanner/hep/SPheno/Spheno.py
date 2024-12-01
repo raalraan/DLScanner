@@ -243,7 +243,45 @@ class scan():
         
         print('Output saved in %s' %str(output_dir))
         return            
+
+    def run_regressor(self,th_value,num_FC_layers,neurons,learning_rate=0.01,epochs=100,batch_size=100,print_output=True):
+        pathS, Lesh,SPHENOMODEL,output_dir,TotVarScanned, VarMin , VarMax,VarLabel,VarNum,TotVarTarget, TargetMin , TargetMax,TargetLabel,TargetNum ,TargetResNum   = read_input() 
+        check_(pathS,Lesh,SPHENOMODEL,output_dir)  
+        model = MLP_Regressor(TotVarScanned,1,num_FC_layers,neurons)
+        model.compile(optimizer=keras.optimizers.Adam(learning_rate=learning_rate), loss=keras.losses.MeanAbsoluteError())    
+        X_g,ll_g=run_train_reg(self.L1,th_value,TotVarScanned,Lesh,VarMin,VarMax,VarNum,VarLabel,SPHENOMODEL,pathS,TotVarTarget,TargetLabel,TargetNum,TargetResNum,TargetMin,TargetMax,output_dir)
+        model.fit(X_g,ll_g,epochs=epochs, batch_size=batch_size,verbose=0)
+        q= 0
+        while len(X_g) < self.collected_points:
+            q+=1
+            x_test = generate_init_HEP(self.L,TotVarScanned,pathS,Lesh,VarLabel,VarMin,VarMax)
+            limits = np.column_stack((VarMin,VarMax))
+            Veg_map = vegas_map_samples(X_g,ll_g,limits)
+            x,_ = Veg_map(x_test)
+            pred = model.predict(x,verbose=0).flatten()
+            ll_ = likelihood(np.array(pred),np.array(TargetMax),np.array(TargetMin))
+            x_new = x[ll_>th_value]
+            y_new = pred[ll_>th_value]
+            xsel = np.append(x_new[:round(self.K*(1-self.frac))],x[:round(self.K*(self.frac))],axis=0)
+            xsel1,ob = refine_points_reg(xsel,th_value,TotVarScanned,Lesh,VarMin,VarMax,VarNum,VarLabel,SPHENOMODEL,pathS,TotVarTarget,TargetLabel,TargetNum,TargetResNum,TargetMin,TargetMax,output_dir)
+            X_g  = np.append(X_g,xsel1[ob>th_value],axis=0)
+            ll_g  = np.append(ll_g,ob[ob>th_value],axis=0)
+            model.fit(X_g,ll_g,epochs=epochs, batch_size=batch_size,verbose=0)
+            if print_output == True:
+                print('DNN_model- Run Number {} - Number of collected points= {}'.format(q,len(X_g)))
+            
+        if os.path.exists(str(output_dir)+"/Accumelated_points.txt"): os.system('rm -rf %s/Accumelated_points.txt '%str(output_dir)) 
+        f= open(str(output_dir)+"/Accumelated_points.txt","x")
+        header = '\t'.join(VarLabel)
+        f.write(header+'\t' + 'Likelihood \n')
+        f.close()
+        X_final = np.column_stack((X_g,ll_g))
+        np.savetxt(str(output_dir)+'/a.txt',X_final, delimiter=',')
+        os.system('cat %s/a.txt >> %s/Accumelated_points.txt '%(str(output_dir),str(output_dir)))
+        os.system('rm -rf %s/a.txt'%str(output_dir))
         
+        print('Output saved in %s' %str(output_dir))
+        return
 ###############################################################
 # Create an instanace of the calss to access all functions    #
 ###############################################################
@@ -329,4 +367,32 @@ def ML_SL(Vegas=True,collected_points=1000,L1=100,L=1000,K=300,period=1,frac=0.2
     model.run_similarity(num_FC_layers,neurons,learning_rate=0.01,Vegas,print_output=True)
     return  
 #############
-ML_SL()
+
+def ML_regressor(th_value=0.5,collected_points=500,L1=50,L=50000,K=300,period=1,frac=0.1,learning_rate=0.0001,num_FC_layers=5,neurons=100,print_output=True):
+    ''' Function to run the scan over SPheno Package using MLP Calssifier.
+  Requirements:
+                       1) Input file specifies the spheno directory, output directory, scan ranges and target ranges.
+                       2) Keras  is used to import the MLP dense layers.
+                       
+  Input args: 
+                  0) th_value: Likelihood threshold to accept the collected points
+                  1) collected_points: Number of the  collect points
+                  2) L1: Number of random scanned points at the zero step to train the network
+                  3) L: Number of the generated points to the network for prediction
+                  4) K: Number of the predicted points to be refined using the SPheno package
+                  5) period: Number to define the period to train the network
+                  6) frac: Fraction of the randomly added points to cover the full parameter space, e.g. 0.2 for 20% random points.
+                  7)K_smote: Number of nearest neighbours used by SMOTE
+                  8) num_FC_layers: Number of the used dense (fully connected) layers
+                  9)neurons: Number of nuerons used in each layer.
+                  10) max_depth: maximum depth of the reandom forest. See the Sklearn manual for more details
+                  11) print_output: if True, the code will print information about the collected points during the run
+  Output args:
+                     text file contains the valid points in the output directory.
+  Defalut initialization:           
+   MLPC(collected_points=500,L1=100,L=1000,K=100,period=1,frac=0.2,K_smote=1,learning_rate=0.01,num_FC_layers=5,neurons=100,print_output=True)                      
+    ''' 
+    model = scan(collected_points,L1,L,K,period,frac)  
+    model.run_regressor(th_value,num_FC_layers,neurons,learning_rate=0.01,epochs=500,print_output=True)
+    return      
+
