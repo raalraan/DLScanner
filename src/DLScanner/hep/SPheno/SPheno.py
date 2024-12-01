@@ -337,7 +337,7 @@ def MLPC(Vegas=True,collected_points=5000,L1=100,L=1000,K=300,period=1,frac=0.2,
    MLPC(collected_points=500,L1=100,L=1000,K=100,period=1,frac=0.2,K_smote=1,learning_rate=0.01,num_FC_layers=5,neurons=100,print_output=True)                      
     ''' 
     model = scan(collected_points,L1,L,K,period,frac)  
-    model.run_MLPC(num_FC_layers,neurons,learning_rate=0.01,Vegas=Vegas,print_output=print_output)
+    model.run_MLPC(num_FC_layers,neurons,learning_rate=learning_rate,Vegas=Vegas,print_output=print_output)
     return  
 #############
 def ML_SL(Vegas=True,collected_points=1000,L1=100,L=1000,K=300,period=1,frac=0.2,learning_rate=0.01,num_FC_layers=5,neurons=100,print_output=True):
@@ -364,7 +364,7 @@ def ML_SL(Vegas=True,collected_points=1000,L1=100,L=1000,K=300,period=1,frac=0.2
    MLPC(collected_points=500,L1=100,L=1000,K=100,period=1,frac=0.2,K_smote=1,learning_rate=0.01,num_FC_layers=5,neurons=100,print_output=True)                      
     ''' 
     model = scan(collected_points,L1,L,K,period,frac)  
-    model.run_similarity(num_FC_layers,neurons,learning_rate=0.01,Vegas,print_output=print_output)
+    model.run_similarity(num_FC_layers,neurons,learning_rate=learning_rate,Vegas,print_output=print_output)
     return  
 #############
 
