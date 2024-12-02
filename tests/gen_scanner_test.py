@@ -47,6 +47,7 @@ outplot = "gen_scanner_test.png"
 naccul = [None]
 naccul_vg = [None]
 for use_vegas in [True, False]:
+    model = ML.MLP_Classifier(ndim, num_FC_layers, neurons)
     # Instantiate sampler and do first training
     mysam = sampler(
         true_class, ndim, limits=limits, method='ML', model=model,
@@ -106,12 +107,12 @@ for use_vegas in [True, False]:
             naccul_vg.append(in_cnt)
         else:
             naccul.append(in_cnt)
-            print(
-                "Accumulated points in target region:",
-                in_cnt,
-                "of",
-                mysam.sample.shape[0]
-            )
+        print(
+            "Accumulated points in target region:",
+            in_cnt,
+            "of",
+            mysam.sample.shape[0]
+        )
 
 plt.plot(
     naccul,
