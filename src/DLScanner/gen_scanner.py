@@ -51,6 +51,7 @@ class sampler():
         use_vegas_map=False,
         vegas_frac=None,
         seed=42,
+        callbacks=None,
     ):
         self.sample0 = sample0
         self.out0 = out0
@@ -108,8 +109,10 @@ class sampler():
             self.vegas_frac = 0.1
         else:
             self.vegas_frac = vegas_frac
+        self.callbacks = callbacks
 
         self.rng = np.random.default_rng(seed)
+        self.histories = []
 
         if method == "ML":
             self.initmodel(epochs, batch_size, verbose)
@@ -135,7 +138,8 @@ class sampler():
         self,
         epochs=None,
         batch_size=None,
-        verbose=None
+        verbose=None,
+        callbacks=None,
     ):
         optimizer = self.optimizer
         loss = self.loss
@@ -146,6 +150,8 @@ class sampler():
         if verbose is None:
             verbose = self.verbose
         npts = self.pts_per_step
+        if callbacks is None:
+            callbacks = self.callbacks
 
         if self.sample0 is None:
             xinit = self.genrand(npts)
@@ -232,33 +238,42 @@ class sampler():
                 xinit_new = xinit
                 outinit_new = outinit_rs
 
-        print(
-            (outinit_new == 1.0).sum(),
-            (outinit_new == 0.0).sum(),
-        )
-
         self.model.compile(optimizer=optimizer, loss=loss)
-        self.model.fit(
-            xinit_new, outinit_new,  # TODO HERE
-            epochs=epochs, batch_size=batch_size, verbose=verbose)
+        self.histories.append(
+            self.model.fit(
+                xinit_new, outinit_new,  # TODO HERE
+                epochs=epochs, batch_size=batch_size, verbose=verbose,
+                callbacks=callbacks
+            ))
         self.inited = True
 
-    def advance(self, epochs=None, batch_size=None, verbose=None):
+    def advance(
+        self,
+        epochs=None,
+        batch_size=None,
+        verbose=None,
+        callbacks=None,
+    ):
         if epochs is None:
             epochs = self.epochs
         if batch_size is None:
             batch_size = self.batch_size
         if verbose is None:
             verbose = self.verbose
+        if callbacks is None:
+            callbacks = self.callbacks
+
         xsug, llsug = self.suggestpts()
         self.sample = np.append(self.sample, xsug, axis=0)
         self.llsample = np.append(self.llsample, llsug, axis=0)
 
-        self.model.fit(
-            self.sample, self.llsample,
-            epochs=epochs, batch_size=batch_size, verbose=verbose)
+        self.histories.append(
+            self.model.fit(
+                self.sample, self.llsample,
+                epochs=epochs, batch_size=batch_size, verbose=verbose,
+                callbacks=callbacks
+            ))
 
-    # TODO Include vegas map ++
     def suggestpts(
         self,
         npts=None, randpts=None, testpts=None, limits=None,
