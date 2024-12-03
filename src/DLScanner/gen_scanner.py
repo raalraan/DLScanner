@@ -249,6 +249,7 @@ class sampler():
 
     def advance(
         self,
+        steps=1,
         epochs=None,
         batch_size=None,
         verbose=None,
@@ -263,16 +264,17 @@ class sampler():
         if callbacks is None:
             callbacks = self.callbacks
 
-        xsug, llsug = self.suggestpts()
-        self.sample = np.append(self.sample, xsug, axis=0)
-        self.llsample = np.append(self.llsample, llsug, axis=0)
+        for j in range(steps):
+            xsug, llsug = self.suggestpts()
+            self.sample = np.append(self.sample, xsug, axis=0)
+            self.llsample = np.append(self.llsample, llsug, axis=0)
 
-        self.histories.append(
-            self.model.fit(
-                self.sample, self.llsample,
-                epochs=epochs, batch_size=batch_size, verbose=verbose,
-                callbacks=callbacks
-            ))
+            self.histories.append(
+                self.model.fit(
+                    self.sample, self.llsample,
+                    epochs=epochs, batch_size=batch_size, verbose=verbose,
+                    callbacks=callbacks
+                ))
 
     def suggestpts(
         self,
