@@ -36,7 +36,7 @@ def vegas_map_samples(
     '''Train a mapping of the parameter space using vegas and a sample of points.
     Input Args:
         xtrain: array
-            Coordinates of the sample. All the coordinates must be normalized to the [0, 1] range
+            Coordinates of the sample.
         ftrain: array
             Result of evaluating a function on xtrain.
         ninc: int, optional
