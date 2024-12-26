@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "DLScanner"
-version = "0.0.3"
+version = "0.1.0"
 authors = [
   { name="Ahmed Hammad"},
   { name="Raymundo Ramos"},
@@ -21,6 +21,7 @@ dependencies = [
     "numpy>=1.23.5,<2.0.0",
     "vegas>=6.1",
     "matplotlib",
+    "scikit-learn",
 ]
 
 [project.urls]
