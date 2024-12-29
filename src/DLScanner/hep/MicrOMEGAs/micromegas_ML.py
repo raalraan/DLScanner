@@ -246,4 +246,3 @@ def ML_SL(vegas=True,collected_points=100,L1=30,L=1000,K=20,period=1,frac=0.2,le
     model = scan_megas(collected_points,L1,L,K,period,frac)  
     model.run_similarity(num_FC_layers,neurons,learning_rate=learning_rate,vegas=vegas,print_output=print_output)
     return  
-ML_SL()
