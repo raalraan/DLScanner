@@ -6,9 +6,12 @@ import time
 from shutil import move
 import vegas
 import numpy as np
-import tensorflow as tf
-from tensorflow import keras
 import random
+import sklearn
+
+from ...utilities.try_imports import try_tensorflow
+tf = try_tensorflow()
+keras = try_tensorflow('keras')
 ###################
 if  os.path.exists('spheno/'):
       os.system('rm -rf spheno/')
@@ -536,7 +539,6 @@ def similariy_classifier(x_train, y_train,function_dim,latent_dim,neurons,num_la
 ############# SPheo  ###############################
 ##################===========================#########    
 class scan():
-    import sklearn
     def __init__(self,collected_points,L1,L,K, period,frac):
         self.collected_points= collected_points
         self.L1 = L1
@@ -560,9 +562,6 @@ class scan():
     
         
     def run_MLPC(self,num_FC_layers,neurons,learning_rate=0.01,epochs=100,batch_size=100,print_output=True):
-        import tensorflow as tf
-        from tensorflow import keras
-        import sklearn
         pathS, Lesh,SPHENOMODEL,output_dir,TotVarScanned, VarMin , VarMax,VarLabel,VarNum,TotVarTarget, TargetMin , TargetMax,TargetLabel,TargetNum ,TargetResNum   = read_input() 
         check_(pathS,Lesh,SPHENOMODEL,output_dir)  
         model = MLP_Classifier(TotVarScanned,num_FC_layers,neurons)
@@ -629,9 +628,6 @@ class scan():
         return    
       
     def run_similarity(self,num_FC_layers,neurons,latent_dim=10,learning_rate=0.01,epochs=100,batch_size=100,print_output=True):
-        import tensorflow as tf
-        from tensorflow import keras
-        import sklearn
         pathS, Lesh,SPHENOMODEL,output_dir,TotVarScanned, VarMin , VarMax,VarLabel,VarNum,TotVarTarget, TargetMin , TargetMax,TargetLabel,TargetNum ,TargetResNum   = read_input() 
         check_(pathS,Lesh,SPHENOMODEL,output_dir)  
         Xf,ob1=run_train(self.L1,TotVarScanned,Lesh,VarMin,VarMax,VarNum,VarLabel,SPHENOMODEL,pathS,TotVarTarget,TargetLabel,TargetNum,TargetResNum,TargetMin,TargetMax,output_dir)
@@ -752,4 +748,3 @@ def ML_SL_trial(collected_points=5000,L1=100,L=1000,K=300,period=1,frac=0.2,lear
     model.run_similarity(num_FC_layers,neurons,learning_rate=0.01,print_output=True)
     return  
 #############
-ML_SL_trial()

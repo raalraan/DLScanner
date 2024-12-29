@@ -3,12 +3,23 @@ import os
 import sys
 import numpy as np
 import random
-from ML import *
-from utils_megas import *
-from vegas_S import vegas_map_samples
+import sklearn
+
+from .ML import *
+from .utils_megas import *
+from .vegas_S import vegas_map_samples
+
+from ...utilities.try_imports import try_tensorflow
+tf = try_tensorflow()
+keras = try_tensorflow('keras')
+
+ModelCheckpoint = keras.callbacks.ModelCheckpoint
+EarlyStopping = keras.callbacks.EarlyStopping
+LearningRateScheduler = keras.callbacks.LearningRateScheduler
+ProgbarLogger = keras.callbacks.ProgbarLogger
+
 #####################
 class scan_megas():
-    import sklearn
     def __init__(self,collected_points,L1,L,K, period,frac):
         self.collected_points= collected_points
         self.L1 = L1
@@ -38,10 +49,6 @@ class scan_megas():
         return np.array(ll).ravel()         
         
     def run_MLPC(self,num_FC_layers,neurons,learning_rate=0.01,epochs=100,batch_size=100,vegas=True,print_output=True):
-        import tensorflow as tf
-        from tensorflow import keras
-        import sklearn
-        from keras.callbacks import ModelCheckpoint,EarlyStopping,LearningRateScheduler,ProgbarLogger
         ########################################
         earlystop = EarlyStopping(monitor = 'loss',restore_best_weights=True, patience=5,verbose=0)
         lr_scheduler = keras.callbacks.LearningRateScheduler(self.lr_schedule)
@@ -116,9 +123,6 @@ class scan_megas():
         return    
       
     def run_similarity(self,num_FC_layers,neurons,latent_dim=10,learning_rate=0.01,epochs=100,batch_size=100,vegas=True,print_output=True):
-        import tensorflow as tf
-        from tensorflow import keras
-        import sklearn
         path, Lesh,output_dir,TotVarScanned, VarMin, VarMax,VarLabel,TotVarTarget, TargetMin, TargetMax,TargetLabel= read_input() 
         check_(path,Lesh,output_dir)  
         Xf,ob1=run_train_megas(self.L1,TotVarScanned,Lesh,VarMin,VarMax,VarLabel,path,TotVarTarget,TargetLabel,TargetMin,TargetMax,output_dir)

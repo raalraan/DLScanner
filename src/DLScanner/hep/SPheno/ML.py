@@ -1,7 +1,8 @@
-import tensorflow as tf
-from tensorflow import keras
 import numpy as np
 import random
+from ...utilities.try_imports import try_tensorflow
+tf = try_tensorflow()
+keras = try_tensorflow('keras')
 #################################
 def MLP_Classifier(function_dim,num_FC_layers,neurons):
     ''' Function to create MLP classfier.

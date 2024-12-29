@@ -6,9 +6,13 @@ import time
 from shutil import move
 import vegas
 import numpy as np
-import tensorflow as tf
-from tensorflow import keras
 import random
+import sklearn
+
+from ...utilities.try_imports import try_tensorflow
+tf = try_tensorflow()
+keras = try_tensorflow('keras')
+
 ###################
 if  os.path.exists('spheno/'):
       os.system('rm -rf spheno/')
@@ -378,7 +382,6 @@ def MLP_Regressor(function_dim,output_dim, num_FC_layers,neurons):
  
 ##################===========================#########    
 class scan():
-    import sklearn
     def __init__(self,collected_points,L1,L,K, period,frac):
         self.collected_points= collected_points
         self.L1 = L1
