@@ -2,27 +2,7 @@ import numpy as np
 from DLScanner.samplers import ML
 from DLScanner.gen_scanner import sampler
 import matplotlib.pyplot as plt
-
-
-def obs(x):
-    F = (2 + np.cos(x[:, 0]/7)*np.cos(x[:, 1]/7)*np.cos(x[:, 2]/7))**5
-    return np.array(F)
-
-
-def likelihood(exp_value, std, th):
-    ll = np.exp(- (exp_value - th)**2/(2*std**2))
-    return ll
-
-
-def true_class(x, exp_v=100, stdv=5):
-    th = obs(x)
-    ll = likelihood(exp_v, stdv, th)
-    for q, item in enumerate(ll):
-        if (item > 0.5):
-            ll[q] = 1
-        else:
-            ll[q] = 0
-    return np.array(ll)
+from user_model import user_function
 
 
 def print_confusion_matrix(ytrue, ypred):
@@ -50,7 +30,7 @@ for use_vegas in [True, False]:
     model = ML.MLP_Classifier(ndim, num_FC_layers, neurons)
     # Instantiate sampler and do first training
     mysam = sampler(
-        true_class, ndim, limits=limits, method='Classifier', model=model,
+        user_function, ndim, limits=limits, method='Classifier', model=model,
         optimizer=optimizer,
         verbose=verbose, epochs=100, use_vegas_map=use_vegas, vegas_frac=0.5
     )
@@ -63,7 +43,7 @@ for use_vegas in [True, False]:
     xtst1 = np.empty((0, ndim))
     while frac1 < 0.5:
         xtst = mysam.genrand(10000)
-        ytst = true_class(xtst)
+        ytst = user_function(xtst)
         if xtst0.shape[0] < 0.5*size_tst:
             xtst0 = np.append(xtst0, xtst[ytst == 0], axis=0)
         if xtst1.shape[0] < 0.5*size_tst:
@@ -76,10 +56,10 @@ for use_vegas in [True, False]:
         xtst1[:int(size_tst*0.5)],
         axis=0
     )
-    ytst_halfs = true_class(xtst_halfs)
+    ytst_halfs = user_function(xtst_halfs)
     # =========================================
 
-    in_cnt = (true_class(mysam.sample) == 1).sum()
+    in_cnt = (user_function(mysam.samples) == 1).sum()
     if use_vegas:
         naccul_vg[0] = in_cnt
     else:
@@ -90,9 +70,9 @@ for use_vegas in [True, False]:
     print_confusion_matrix(ytst_halfs, pctst)
     print(
         "Accumulated points in target region:",
-        (true_class(mysam.sample) == 1).sum(),
+        (user_function(mysam.samples) == 1).sum(),
         "of",
-        mysam.sample.shape[0]
+        mysam.samples.shape[0]
     )
 
     for j in range(10):
@@ -102,7 +82,7 @@ for use_vegas in [True, False]:
         print("Confusion matrix:")
         print_confusion_matrix(ytst_halfs, pctst)
 
-        in_cnt = (true_class(mysam.sample) == 1).sum()
+        in_cnt = (user_function(mysam.samples) == 1).sum()
         if use_vegas:
             naccul_vg.append(in_cnt)
         else:
@@ -111,7 +91,7 @@ for use_vegas in [True, False]:
             "Accumulated points in target region:",
             in_cnt,
             "of",
-            mysam.sample.shape[0]
+            mysam.samples.shape[0]
         )
 
 plt.plot(
