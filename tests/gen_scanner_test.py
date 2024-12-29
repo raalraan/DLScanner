@@ -1,5 +1,5 @@
 import numpy as np
-from DLScanner.samplers.ML import ML
+from DLScanner.samplers import ML
 from DLScanner.gen_scanner import sampler
 import matplotlib.pyplot as plt
 
@@ -50,8 +50,8 @@ for use_vegas in [True, False]:
     model = ML.MLP_Classifier(ndim, num_FC_layers, neurons)
     # Instantiate sampler and do first training
     mysam = sampler(
-        true_class, ndim, limits=limits, method='ML', model=model,
-        optimizer=optimizer, loss=loss,
+        true_class, ndim, limits=limits, method='Classifier', model=model,
+        optimizer=optimizer,
         verbose=verbose, epochs=100, use_vegas_map=use_vegas, vegas_frac=0.5
     )
 
