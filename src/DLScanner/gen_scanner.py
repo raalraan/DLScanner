@@ -1,6 +1,6 @@
 import numpy as np
 from .utilities.vegas import vegas_map_samples
-from DLScanner.samplers import ML
+from .samplers import ML
 
 
 class sampler():
