@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "DLScanner"
-version = "0.1.1"
-authors = [
+version = "1.0.0"
+maintainers = [
   { name="Ahmed Hammad"},
   { name="Raymundo Ramos"},
 ]

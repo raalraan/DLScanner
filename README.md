@@ -1,6 +1,6 @@
 # DLScanner
 
-[Documentation on arXiv](https://arxiv.org/abs/2212.XXXXX)
+[Documentation on arXiv](https://arxiv.org/abs/2412.19675)
 
 A scanner package enhanced by Deep Learning (DL) techniques.
 This package addresses two significant challenges associated with previously developed DL-based methods: slow convergence in high-dimensional scans and the limited generalization of the DL network when mapping random points to the target space.
