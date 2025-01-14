@@ -100,7 +100,7 @@ def plot_hist_all(file_:str,width= 15,hight=10, bins=100, Normalize=True, grid=T
 
 
 
-def plot_hist(file_:str,width= 15,hight=10, bins=100, Normalize=True, grid=True,col:int):
+def plot_hist(file_:str, col:int,width= 15,hight=10, bins=100, Normalize=True, grid=True):
   import numpy as np
   import matplotlib.pyplot as plt
   f= open(file_, 'r')
