@@ -7,11 +7,11 @@ class sampler():
     """A generic scanner for a user-defined function
 
     Args:
-        ndim (int): Number of dimensions in the function.
         user_fun (callable): A function that takes a ndim-dimensional vector
             as input and returns at least a single value.  Note that some
             samplers require the output to be a single number per vector
             input.
+        ndim (int): Number of dimensions in the function.
         limits (array-like of floats): limits for the parameters of the
             function.  It must be an array with ndim rows and two columns.
         outdim (optional, int): Dimension of the output
