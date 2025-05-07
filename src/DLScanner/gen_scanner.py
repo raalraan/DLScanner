@@ -54,6 +54,7 @@ class sampler():
         vegas_frac=None,
         seed=42,
         callbacks=None,
+        threshold_suggest=None,
     ):
         self.samples0 = samples0
         self.out0 = out0
@@ -125,6 +126,10 @@ class sampler():
             self.vegas_frac = vegas_frac
         self.vegas_map_gen = None
         self.callbacks = callbacks
+        if threshold_suggest is None:
+            self.threshold_suggest = 0.5
+        else:
+            self.threshold_suggest = threshold_suggest
 
         self.rng = np.random.default_rng(seed)
         self.histories = []
@@ -315,7 +320,8 @@ class sampler():
     def suggestpts(
         self,
         npts=None, randpts=None, L=None, limits=None,
-        verbose=None, use_vegas_map=None, vegas_frac=None
+        verbose=None, use_vegas_map=None, vegas_frac=None,
+        threshold=None
     ):
         # randpts: number of points chosen at random that will be
         #     added to the suggested points, randpts < self.K
@@ -337,6 +343,8 @@ class sampler():
             use_vegas_map = self.use_vegas_map
         if vegas_frac is None:
             vegas_frac = self.vegas_frac
+        if threshold is None:
+            threshold = self.threshold_suggest
         _randpts = randpts
         # Try to  predict the observable for several points using what the
         # machine learned
@@ -363,7 +371,7 @@ class sampler():
             batch_size=self.batch_size, verbose=TFverbose)
 
         # FIXME Consider cases other than classification
-        xcand = xtry[(ptry > 0.5).flatten()]
+        xcand = xtry[(ptry > threshold).flatten()]
 
         if xcand.shape[0] < npts - randpts:
             _randpts = npts - xcand.shape[0]
