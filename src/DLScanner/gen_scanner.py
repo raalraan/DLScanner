@@ -52,6 +52,7 @@ class sampler():
         args=None,  # TODO Not used for the time being
         use_vegas_map=True,
         vegas_frac=None,
+        vegas_ninc=100,
         seed=42,
         callbacks=None,
         threshold_suggest=None,
@@ -124,6 +125,7 @@ class sampler():
             self.vegas_frac = 0.1
         else:
             self.vegas_frac = vegas_frac
+        self.vegas_ninc = vegas_ninc
         self.vegas_map_gen = None
         self.callbacks = callbacks
         if threshold_suggest is None:
@@ -277,6 +279,7 @@ class sampler():
         batch_size=None,
         verbose=None,
         callbacks=None,
+        vegas_ninc=None,
     ):
         if epochs is None:
             epochs = self.epochs
@@ -291,7 +294,7 @@ class sampler():
             callbacks = self.callbacks
 
         for j in range(steps):
-            xsug, llsug = self.suggestpts()
+            xsug, llsug = self.suggestpts(vegas_ninc=vegas_ninc)
             self.samples = np.append(self.samples, xsug, axis=0)
             self.samples_list.append(xsug)
             self.samples_out = np.append(self.samples_out, llsug, axis=0)
@@ -321,7 +324,7 @@ class sampler():
         self,
         npts=None, randpts=None, L=None, limits=None,
         verbose=None, use_vegas_map=None, vegas_frac=None,
-        threshold=None
+        threshold=None, vegas_ninc=None,
     ):
         # randpts: number of points chosen at random that will be
         #     added to the suggested points, randpts < self.K
@@ -345,6 +348,8 @@ class sampler():
             vegas_frac = self.vegas_frac
         if threshold is None:
             threshold = self.threshold_suggest
+        if vegas_ninc is None:
+            vegas_ninc = self.vegas_ninc
         _randpts = randpts
         # Try to  predict the observable for several points using what the
         # machine learned
@@ -356,7 +361,8 @@ class sampler():
             if verbose > 0:
                 print("Training vegas map using accumulated samples")
             map_vg = vegas_map_samples(
-                self.samples, self.samples_out.flatten(), self.limits
+                self.samples, self.samples_out.flatten(), self.limits,
+                ninc=vegas_ninc
             )
             self.vegas_map_gen = map_vg
             # Discard jacobian
