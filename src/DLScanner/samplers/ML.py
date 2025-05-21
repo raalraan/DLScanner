@@ -150,7 +150,7 @@ def similariy_classifier(x_train, y_train,function_dim,latent_dim,neurons,num_la
   output_layer = keras.layers.Dense(1, activation="linear")(merge_layer)
   model_S = keras.Model(inputs=[input_1, input_2], outputs=output_layer)
   model_S.compile(optimizer=keras.optimizers.Adam(learning_rate=learning_rate), loss=loss(margin=1))
-  model_S.fit([xtrain[:,0],xtrain[:,1]], ytrain,epochs=epochs, batch_size=batch_size,verbose=0)
+  model_S.fit([xtrain[:,0],xtrain[:,1]], ytrain,epochs=epochs, batch_size=batch_size,verbose=verbose)
   ####### Second training step ######
   inp = keras.layers.Input((function_dim, ))
   x = (embedding_network(inp))
@@ -159,5 +159,5 @@ def similariy_classifier(x_train, y_train,function_dim,latent_dim,neurons,num_la
   output = keras.layers.Dense(1,activation="sigmoid")(x)
   model = keras.Model(inp,output)
   model.compile(optimizer=keras.optimizers.Adam(learning_rate=learning_rate), loss=keras.losses.BinaryCrossentropy())
-  model.fit(x_train,y_train,epochs=epochs, batch_size=batch_size,verbose=0)
+  model.fit(x_train,y_train,epochs=epochs, batch_size=batch_size,verbose=verbose)
   return model      
