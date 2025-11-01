@@ -6,7 +6,7 @@ It is based on [`NMSSMTools`](https://www.lupm.in2p3.fr/users/nmssm/) and [`MadG
 with the help of a custom `spectrum2paramcard.py` based on Johannes Rosskopp original script.
 
 To run the scan it is only necessary to run `python3 run_scan.py`.
-In its current state this only work in Linux.
+In its current state it only works in Linux.
 
 * `run_scan.py`: main script that takes care of setting up and running the scan.
 * `my_setup.py`: file that takes care of configurations like working directories,
