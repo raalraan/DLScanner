@@ -1,0 +1,4 @@
+launch
+set nevents 1
+# print_results --format=short
+exit

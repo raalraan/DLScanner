@@ -1,0 +1,13 @@
+# Set madgraph / madevents options and save
+set auto_update 0
+set run_mode 0
+set automatic_html_opening False
+set nb_core 1
+save options
+# =========================================
+
+import model nmssm
+define ca = x1+ x1-
+generate p p > ca n2 / g u c d s u~ c~ d~ s~ a ve vm vt e- mu- ve~ vm~ vt~ e+ mu+ go ul cl t1 ur cr t2 dl sl b1 dr sr b2 ul~ cl~ t1~ ur~ cr~ t2~ dl~ sl~ b1~ dr~ sr~ b2~ t b t~ b~ z h01 h2 h03 h3 a02 h+ sve svm svt el- mul- ta1- er- mur- ta2- h- sve~ svm~ svt~ el+ mul+ ta1+ er+ mur+ ta2+
+output output_dir_mg
+

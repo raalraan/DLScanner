@@ -37,3 +37,10 @@ For example, `.venv` in the root of this repository.
 Then, install this package for testing by running `pip install -e .` from the
 root of this repository.
 
+# Examples
+
+Examples that use `DLScanner` in some form are contained in [test/examples](tests/examples)
+in this repository.
+At the moment it only contains the code used in the paper
+[Explaining Data Anomalies over the NMSSM Parameter Space with Deep Learning Techniques](https://arxiv.org/abs/2508.13912)
+under the directory [2508_13912](tests/examples/2508_13912).
