@@ -15,12 +15,14 @@ In its current state it only works in Linux.
   and the numbers that will be parsed from `NMSSMTools` output files.
 * `my_classifier.py`: file with the setup of the classifier using the ranges in `my_setup.py`.
   It also contains custom modifications to the `advance` method to use the classifier to keep minimizing the penalty function.
-* `pyNMSSMTools.py`: Adaptation of `NMSSMTools` to run on multiple CPUs using the configuration from `my_setup.py`.
+* `pyNMSSMTools.py`: adaptation of `NMSSMTools` to run on multiple CPUs using the configuration from `my_setup.py`.
   it also includes commands to run `MadGraph` when necessary using the commands of `mg_create_output` and `me_calculate_xsec`.
 * `spectrum2paramcard.py`: Custom adaptation of `spectrum2paramcard` script by Johannes Rosskopp
   to make it work as an importable module.
 * `inp_defs.dat`: Initial input file setting some defaults and used by `pyNMSSMTools.py` to fill in parameter values
   during the scan.
-* `LZ_2024+2022.csv`: Data for the limits from the LZ collaboration from [Dark Matter Search Results from 4.2 Tonne-Years of Exposure of the LUX-ZEPLIN (LZ) Experiment](https://arxiv.org/abs/2410.17036).
+* `LZ_2024+2022.csv`: data for the limits from the LZ collaboration from [Dark Matter Search Results from 4.2 Tonne-Years of Exposure of the LUX-ZEPLIN (LZ) Experiment](https://arxiv.org/abs/2410.17036).
 * `Makefile`: file used internally by `pyNMSSMTools.py` for setting up working directories
   using configurations from `my_setup.py`.
+* `example_input_output/`: contains examples of input files for NMSSMTools and full outputs for all the numerical studies applied.
+  These examples correspond to minimum $\chi^2$, and the mono-H and mono-Z benchmark points.
