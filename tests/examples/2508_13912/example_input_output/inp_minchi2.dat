@@ -1,6 +1,5 @@
 # Input file for NMSSMTools
 # Based on SUSY LES HOUCHES ACCORD II
-# pyNMSSMTools note: Do not change values here, this is used as a template by pyNMSSMTools.py
 BLOCK MODSEL
     3    1        # NMSSM particle content
     1    0        # IMOD (0=general NMSSM, 1=SUGRA, 2=GMSB
